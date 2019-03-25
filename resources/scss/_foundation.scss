@@ -1,0 +1,20 @@
+@charset 'utf-8';
+
+$motion-ui-speeds: (
+  default: 125ms,
+  slow: 750ms,
+  fast: 250ms,
+) !default;
+
+@import 'settings';
+@import 'node_modules/foundation-sites/scss/foundation';
+@import 'node_modules/motion-ui/src/motion-ui';
+
+$xy-grid: false; // Disable XY Grid
+
+/* Foundation Components */
+@include foundation-everything;
+
+/* Motion UI */
+@include motion-ui-transitions;
+@include motion-ui-animations;
