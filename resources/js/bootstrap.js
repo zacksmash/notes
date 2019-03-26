@@ -70,7 +70,21 @@ Vue.use(require('@websanova/vue-auth'), {
   },
 });
 
+window.Dispatch = new class {
+  constructor() {
+    this.vue = new Vue();
+  }
+
+  fire(event, data = null) {
+    this.vue.$emit(event, data)
+  }
+
+  listen(event, callback = null) {
+    this.vue.$on(event, callback)
+  }
+}
+
 /**
  * Register Global Components
  */
-Vue.component('example-component', require('./components/ExampleComponent'));
+// Vue.component('example-component', require('./components/ExampleComponent'));

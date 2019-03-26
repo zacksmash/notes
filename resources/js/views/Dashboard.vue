@@ -1,72 +1,15 @@
 <template>
-  <div>
-    <div class="top-bar">
-      <div class="top-bar-left">
-        <ul class="dropdown menu" data-dropdown-menu>
-          <li class="menu-text">Dashboard</li>
-        </ul>
-      </div>
-      <div class="top-bar-right">
-        <ul class="menu">
-          <li>
-            <button class="button" @click="logout">Logout</button>
-          </li>
-        </ul>
-      </div>
-    </div>
+  <div class="editor-container">
+    <side-menu/>
 
-    <div class="row">
-      <div class="large-3 medium-4 small-12 columns">
-        <button
-        @click="addNote"
-        class="button expanded">
-          Add Note
-        </button>
-        <ul class="menu vertical">
-          <li
-          v-for="note in notes"
-          :key="note.id"
-          v-text="note.body ? note.body : 'New Note'"
-          @click="activeNote(note)">
-          </li>
-        </ul>
-      </div>
-
-      <div class="large-9 medium-8 small-12 columns">
-
-        <form
-        @submit.prevent="saveNote"
-        v-show="note.hasOwnProperty('id')">
-          <textarea
-          ref="noteField"
-          v-model="note.body"
-          @blur="blurSaveNote"
-          rows="10"></textarea>
-          <div class="row align-justify">
-            <div class="column">
-              <button class="button" type="submit">Save</button>
-            </div>
-            <div class="column shrink">
-              <div class="button secondary" @click="favoriteNote">
-                <span v-if="note.favorited">
-                  &#9733;
-                </span>
-                <span v-else>
-                  &#9734;
-                </span>
-              </div>
-            </div>
-            <div class="column shrink text-right" v-if="note.id">
-              <div class="button alert" @click.once="deleteNote(note.id)">&#9587;</div>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
+    <editor/>
   </div>
 </template>
 
 <script>
+import SideMenu from '../components/Menu';
+import Editor from '../components/Editor';
+
 export default {
   data() {
     return {
@@ -74,6 +17,11 @@ export default {
       notes: [],
       blurSave: {}
     }
+  },
+
+  components: {
+    Editor,
+    SideMenu
   },
 
   methods: {
@@ -86,13 +34,10 @@ export default {
 
     activeNote(note) {
       this.note = note;
+      this.$emit('note-selected');
     },
 
     addNote() {
-      this.$nextTick(() => {
-
-      });
-
       this.note = {
         id: 'pending'
       }
@@ -104,34 +49,14 @@ export default {
       })
       .then(({data}) => {
         this.note = this.notes[0] = data.note;
-        this.$refs.noteField.focus();
+        this.$emit('note-selected');
       });
     },
 
-    saveNote() {
-      clearTimeout(this.blurSave);
-
-      this.$http.put(`/notes/${this.note.id}`, this.note);
-    },
-
-    favoriteNote() {
-      clearTimeout(this.blurSave);
-
-      this.note.favorited = this.note.favorited == null ? true : null;
-
-      this.saveNote();
-    },
-
-    blurSaveNote() {
-      this.blurSave = setTimeout(() => this.saveNote(), 750);
-    },
-
-    deleteNote(note) {
-      clearTimeout(this.blurSave);
+    removeNote(note) {
       let deleted = this.notes.findIndex((i => i.id == note));
       this.notes.splice(deleted, 1);
       this.note = {};
-      this.$http.delete(`/notes/${note}`);
     },
 
     broadcast() {
@@ -164,6 +89,7 @@ export default {
 
   mounted() {
     this.broadcast();
+    Dispatch.listen('note-deleted', (note) => this.removeNote(note));
   }
 }
 </script>
