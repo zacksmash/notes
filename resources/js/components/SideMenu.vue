@@ -17,42 +17,29 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex';
 export default {
   data() {
-    return {
-      notes: this.$auth.user().notes,
-      note: {}
-    }
+    return {}
   },
 
+  computed: {...mapState(['notes', 'note'])},
+
   methods: {
-    addNote() {
-      this.note = {
-        id: 'pending'
-      }
-
-      this.notes.unshift(this.note);
-
+    addNote(store) {
       this.$http.post('notes', {
         user_id: this.$auth.user().id
       })
       .then(({data}) => {
-        this.note = this.notes[0] = data.note;
-        Dispatch.fire('note-selected', this.note);
+        this.$store.commit('applyAddNote', data.note);
+        Dispatch.fire('note-selected');
       });
     },
 
     activeNote(note) {
-      Dispatch.fire('note-selected', note);
+      this.$store.commit('applyActiveNote', note);
+      Dispatch.fire('note-selected', this.note);
     }
   },
-
-  mounted() {
-    Dispatch.listen('note-deleted', (note) => {
-      let deleted = this.notes.findIndex((i => i.id == note));
-      this.notes.splice(deleted, 1);
-      this.note = {};
-    })
-  }
 }
 </script>

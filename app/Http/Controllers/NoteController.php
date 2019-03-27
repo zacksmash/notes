@@ -16,7 +16,7 @@ class NoteController extends Controller
      */
     public function index()
     {
-        $notes = Note::orderAsc()->get();
+        $notes = Note::latest()->get();
 
         return response()->json([
             'notes' => $notes

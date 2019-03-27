@@ -35,14 +35,17 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 export default {
   data() {
     return {
-      note: {},
       blurSave: {},
       showMenu: false
     }
   },
+
+  computed: {...mapState(['note'])},
 
   methods: {
     saveNote() {
@@ -62,11 +65,11 @@ export default {
     deleteNote(note) {
       clearTimeout(this.blurSave);
 
-      Dispatch.fire('note-deleted', note);
-
-      this.note = {};
-
-      this.$http.delete(`/notes/${note}`);
+      this.$http.delete(`/notes/${note}`)
+      .then(() => {
+        this.$store.commit('applyDeleteNote', note);
+        this.$store.commit('applyActiveNote', {});
+      });
     },
 
     blurSaveNote() {
@@ -75,8 +78,7 @@ export default {
   },
 
   mounted() {
-    Dispatch.listen('note-selected', (note) => {
-      this.note = note;
+    Dispatch.listen('note-selected', () => {
       this.showMenu = false;
       this.$refs.noteField.focus();
     });
