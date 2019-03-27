@@ -18,6 +18,7 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
+
 export default {
   data() {
     return {}
@@ -32,14 +33,22 @@ export default {
       })
       .then(({data}) => {
         this.$store.commit('applyAddNote', data.note);
-        Dispatch.fire('note-selected');
+        this.$store.commit('applyActiveNote', data.note);
+        this.$eventHub.$emit('note-selected', data.note);
       });
     },
 
     activeNote(note) {
       this.$store.commit('applyActiveNote', note);
-      Dispatch.fire('note-selected', this.note);
-    }
+      this.$eventHub.$emit('note-selected', note);
+    },
+
+    logout() {
+      this.$auth.logout({
+        makeRequest: true,
+        redirect: '/login'
+      });
+    },
   },
 }
 </script>

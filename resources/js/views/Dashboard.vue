@@ -8,11 +8,15 @@
 <script>
 import SideMenu from '../components/SideMenu';
 import Editor from '../components/Editor';
-import { mapActions } from 'vuex';
+import { mapState } from 'vuex';
 
 export default {
   data() {
     return {}
+  },
+
+  computed: {
+    ...mapState(['note'])
   },
 
   components: {
@@ -21,23 +25,19 @@ export default {
   },
 
   methods: {
-    logout() {
-      this.$auth.logout({
-        makeRequest: true,
-        redirect: '/login'
-      });
-    },
-
     broadcast() {
       this.$echo.private(`Notes.User.${this.$auth.user().id}`)
       .listen('NoteCreated', ({note}) => {
         this.$store.commit('applyAddNote', note);
+        this.$eventHub.$emit('note-added', note);
       })
       .listen('NoteUpdated', ({note}) => {
         this.$store.commit('applyUpdateNote', note);
+        this.$eventHub.$emit('note-updated', note);
       })
       .listen('NoteDeleted', ({note}) => {
         this.$store.commit('applyDeleteNote', note);
+        this.$eventHub.$emit('note-deleted', note);
       });
     }
   },

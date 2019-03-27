@@ -4,7 +4,6 @@ import _ from 'lodash';
 import $ from 'jquery';
 import axios from 'axios';
 import router from './router';
-import Echo from 'laravel-echo'
 import Pusher from 'pusher-js';
 
 // Vue Dependencies
@@ -13,6 +12,10 @@ import Vuex from 'vuex';
 import VueRouter from 'vue-router';
 import VueAxios from 'vue-axios';
 import VueEcho from 'vue-echo';
+
+//-------------------------------------
+
+const authTokenName = 'auth_token';
 
 // Attach jQuery to the window object
 try {
@@ -31,8 +34,6 @@ if (location.port) {
 // Set the Axios base URL
 window.axios.defaults.baseURL = `${baseURL}/api`;
 
-const tokenName = 'auth_token';
-
 /**
  * Register Vue Plugins
  */
@@ -48,7 +49,7 @@ Vue.use(VueEcho, {
   encrypted: true,
   auth: {
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem(tokenName)}`
+      'Authorization': `Bearer ${localStorage.getItem(authTokenName)}`
     }
   }
 });
@@ -61,7 +62,7 @@ Vue.use(require('@websanova/vue-auth'), {
   auth: require('@websanova/vue-auth/drivers/auth/bearer.js'),
   http: require('@websanova/vue-auth/drivers/http/axios.1.x.js'),
   router: require('@websanova/vue-auth/drivers/router/vue-router.2.x.js'),
-  tokenDefaultName: tokenName,
+  tokenDefaultName: authTokenName,
   forbiddenRedirect: {
     path: '/unauthorized'
   },
@@ -70,19 +71,7 @@ Vue.use(require('@websanova/vue-auth'), {
   },
 });
 
-window.Dispatch = new class {
-  constructor() {
-    this.vue = new Vue();
-  }
-
-  fire(event, data = null) {
-    this.vue.$emit(event, data)
-  }
-
-  listen(event, callback = null) {
-    this.vue.$on(event, callback)
-  }
-}
+Vue.prototype.$eventHub = new Vue(); // Global event bus
 
 /**
  * Register Global Components
