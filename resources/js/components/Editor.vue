@@ -24,8 +24,6 @@
         <textarea
         ref="noteField"
         v-model="note.body"
-        @keyup="editedText"
-        @keydown.once="getExistingBody"
         rows="10"></textarea>
       </form>
 
@@ -45,8 +43,7 @@ export default {
     return {
       blurSave: {},
       showMenu: false,
-      edits: '',
-      previousBody: '',
+      currentBody: 0
     }
   },
 
@@ -55,6 +52,8 @@ export default {
   methods: {
     saveNote() {
       clearTimeout(this.blurSave);
+
+      this.currentBody = this.note.body ? this.note.body.length : 0;
 
       this.$http.put(`/notes/${this.note.id}`, this.note);
     },
@@ -77,15 +76,6 @@ export default {
       });
     },
 
-    // TODO: Add in the ability to merge notes
-    editedText() {
-      this.edits = this.note.body.replace(this.previousBody, '');
-    },
-
-    getExistingBody() {
-      this.previousBody = this.note.body;
-    },
-
     blurSaveNote() {
       this.blurSave = setTimeout(() => this.saveNote(), 750);
     },
@@ -94,21 +84,30 @@ export default {
   mounted() {
     this.$eventHub.$on('note-selected', () => {
       this.showMenu = false;
+      this.currentBody = this.note.body ? this.note.body.length : 0;
       this.$nextTick(() => this.$refs.noteField.focus());
     });
 
     this.$eventHub.$on('note-updated', (note) => {
       if (this.note.id === note.id) {
-        note.body = (note.body) ? note.body + this.edits : note.body;
-        this.edits = '';
-        this.previousBody = note.body;
+        let edits = this.note.body.substring(this.currentBody);
+
+        if (note.body) {
+          note.body = note.body.concat('', edits);
+        } else {
+          note.body = edits;
+        }
+
+        this.currentBody = note.body.length;
+
+        this.$store.commit('applyUpdateNote', note);
         this.$store.commit('applyActiveNote', note);
       }
     });
 
     this.$eventHub.$on('note-deleted', (note) => {
       if (this.note.id === note.id) {
-        this.$store.commit('applyDeleteNote', note);
+        this.$store.commit('applyActiveNote', {});
       }
     });
   }
