@@ -24,6 +24,7 @@
         <textarea
         ref="noteField"
         v-model="note.body"
+        @blur="blurSaveNote"
         rows="10"></textarea>
       </form>
 
@@ -51,7 +52,7 @@ export default {
 
   methods: {
     saveNote() {
-      clearTimeout(this.blurSave);
+      this.clearBlurSave();
 
       this.currentBodyLength = this.note.body ? this.note.body.length : 0;
 
@@ -59,7 +60,7 @@ export default {
     },
 
     favoriteNote() {
-      clearTimeout(this.blurSave);
+      this.clearBlurSave();
 
       this.$set(this.note, 'favorited', this.note.favorited == null ? true : null);
 
@@ -67,7 +68,7 @@ export default {
     },
 
     deleteNote(note) {
-      clearTimeout(this.blurSave);
+      this.clearBlurSave();
 
       this.$http.delete(`/notes/${note.id}`)
       .then(() => {
@@ -79,6 +80,10 @@ export default {
     blurSaveNote() {
       this.blurSave = setTimeout(() => this.saveNote(), 750);
     },
+
+    clearBlurSave() {
+      return clearTimeout(this.blurSave);
+    }
   },
 
   mounted() {
