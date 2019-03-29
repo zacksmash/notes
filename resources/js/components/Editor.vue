@@ -24,7 +24,7 @@
         <textarea
         ref="noteField"
         v-model="note.body"
-
+        @blur="blurSaveNote"
         rows="10"></textarea>
       </form>
 
