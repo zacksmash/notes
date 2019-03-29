@@ -33,8 +33,7 @@ export default {
       })
       .then(({data}) => {
         this.$store.commit('applyAddNote', data.note);
-        this.$store.commit('applyActiveNote', data.note);
-        this.$eventHub.$emit('note-selected', data.note);
+        this.activeNote(data.note)
       });
     },
 

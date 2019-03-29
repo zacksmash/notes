@@ -32,8 +32,8 @@ export default {
         this.$eventHub.$emit('note-added', note);
       })
       .listen('NoteUpdated', ({note}) => {
-        this.$store.commit('applyUpdateNote', note);
         this.$eventHub.$emit('note-updated', note);
+        this.$store.commit('applyUpdateNote', note);
       })
       .listen('NoteDeleted', ({note}) => {
         this.$store.commit('applyDeleteNote', note);

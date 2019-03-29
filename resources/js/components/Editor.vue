@@ -24,7 +24,7 @@
         <textarea
         ref="noteField"
         v-model="note.body"
-        @blur="blurSaveNote"
+
         rows="10"></textarea>
       </form>
 
@@ -95,13 +95,11 @@ export default {
 
     this.$eventHub.$on('note-updated', (note) => {
       if (this.note.id === note.id) {
-        // TODO: Look into 2+ incoming body submissions will overwrite what the user has written
-
         let edits = this.note.body ? this.note.body.substring(this.currentBodyLength) : '';
 
-        note.body = (note.body) ? note.body.concat('', edits) : '';
+        this.currentBodyLength = note.body ? note.body.length : 0;
 
-        this.currentBodyLength = note.body.length;
+        note.body = (note.body) ? note.body.concat('', edits) : edits;
 
         this.$store.commit('applyUpdateNote', note);
         this.$store.commit('applyActiveNote', note);
