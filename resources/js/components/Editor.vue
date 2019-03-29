@@ -95,6 +95,8 @@ export default {
 
     this.$eventHub.$on('note-updated', (note) => {
       if (this.note.id === note.id) {
+        // TODO: Look into 2+ incoming body submissions will overwrite what the user has written
+
         let edits = this.note.body ? this.note.body.substring(this.currentBodyLength) : '';
 
         note.body = (note.body) ? note.body.concat('', edits) : '';
