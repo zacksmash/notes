@@ -43,7 +43,7 @@ export default {
     return {
       blurSave: {},
       showMenu: false,
-      currentBody: 0
+      currentBodyLength: 0
     }
   },
 
@@ -53,7 +53,7 @@ export default {
     saveNote() {
       clearTimeout(this.blurSave);
 
-      this.currentBody = this.note.body ? this.note.body.length : 0;
+      this.currentBodyLength = this.note.body ? this.note.body.length : 0;
 
       this.$http.put(`/notes/${this.note.id}`, this.note);
     },
@@ -84,21 +84,17 @@ export default {
   mounted() {
     this.$eventHub.$on('note-selected', () => {
       this.showMenu = false;
-      this.currentBody = this.note.body ? this.note.body.length : 0;
+      this.currentBodyLength = this.note.body ? this.note.body.length : 0;
       this.$nextTick(() => this.$refs.noteField.focus());
     });
 
     this.$eventHub.$on('note-updated', (note) => {
       if (this.note.id === note.id) {
-        let edits = this.note.body.substring(this.currentBody);
+        let edits = this.note.body ? this.note.body.substring(this.currentBodyLength) : '';
 
-        if (note.body) {
-          note.body = note.body.concat('', edits);
-        } else {
-          note.body = edits;
-        }
+        note.body = (note.body) ? note.body.concat('', edits) : '';
 
-        this.currentBody = note.body.length;
+        this.currentBodyLength = note.body.length;
 
         this.$store.commit('applyUpdateNote', note);
         this.$store.commit('applyActiveNote', note);
