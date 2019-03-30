@@ -1,7 +1,7 @@
 <template>
   <div class="editor-container">
-    <side-menu/>
-    <editor/>
+    <side-menu :notes="notes" />
+    <editor :note="note" />
   </div>
 </template>
 
@@ -16,7 +16,10 @@ export default {
   },
 
   computed: {
-    ...mapState(['note'])
+    ...mapState({
+      note: state => state.notes.active,
+      notes: state => state.notes.items
+    })
   },
 
   components: {
@@ -28,25 +31,26 @@ export default {
     broadcast() {
       this.$echo.private(`Notes.User.${this.$auth.user().id}`)
       .listen('NoteCreated', ({note}) => {
-        this.$store.commit('applyAddNote', note);
+        this.$store.commit('notes/addItem', note);
+
         this.$eventHub.$emit('note-added', note);
       })
       .listen('NoteUpdated', ({note}) => {
+        this.$store.commit('notes/editItem', note);
+
         this.$eventHub.$emit('note-updated', note);
-        this.$store.commit('applyUpdateNote', note);
       })
       .listen('NoteDeleted', ({note}) => {
-        this.$store.commit('applyDeleteNote', note);
+        this.$store.commit('notes/deleteItem', note);
+
         this.$eventHub.$emit('note-deleted', note);
       });
     }
   },
 
   created() {
-    this.$store.dispatch('getNotes');
-  },
+    this.$store.dispatch('notes/all');
 
-  mounted() {
     this.broadcast();
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <aside class="editor-menu">
     <button
-    @click="addNote"
+    @click="createNote"
     class="button expanded">
       Add Note
     </button>
@@ -10,35 +10,36 @@
       v-for="note in notes"
       :key="note.id"
       v-text="note.body ? note.body : 'New Note'"
-      @click="activeNote(note)">
+      @click="selectNote(note)">
       </li>
     </ul>
   </aside>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState } from 'vuex';
 
 export default {
   data() {
-    return {}
+    return {
+      newNote: {
+        user_id: this.$auth.user().id
+      }
+    }
   },
 
-  computed: {...mapState(['notes', 'note'])},
+  props: ['notes'],
 
   methods: {
-    addNote(store) {
-      this.$http.post('notes', {
-        user_id: this.$auth.user().id
-      })
-      .then(({data}) => {
-        this.$store.commit('applyAddNote', data.note);
-        this.activeNote(data.note)
-      });
+    createNote() {
+      this.$store
+      .dispatch('notes/store', this.newNote)
+      .then(() => this.$eventHub.$emit('note-selected', this.note));
     },
 
-    activeNote(note) {
-      this.$store.commit('applyActiveNote', note);
+    selectNote(note) {
+      this.$store.commit('notes/activeItem', note);
+
       this.$eventHub.$emit('note-selected', note);
     },
 

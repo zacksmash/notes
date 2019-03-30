@@ -44,11 +44,12 @@ export default {
     return {
       blurSave: {},
       showMenu: false,
-      currentBodyLength: 0
+      currentBodyLength: 0,
+      shouldUpdate: true // TODO: Determine if the body has been changed which requires an update
     }
   },
 
-  computed: {...mapState(['note'])},
+  props: ['note'],
 
   methods: {
     saveNote() {
@@ -56,7 +57,7 @@ export default {
 
       this.currentBodyLength = this.note.body ? this.note.body.length : 0;
 
-      this.$http.put(`/notes/${this.note.id}`, this.note);
+      this.$store.dispatch('notes/update', this.note);
     },
 
     favoriteNote() {
@@ -70,19 +71,15 @@ export default {
     deleteNote(note) {
       this.clearBlurSave();
 
-      this.$http.delete(`/notes/${note.id}`)
-      .then(() => {
-        this.$store.commit('applyDeleteNote', note);
-        this.$store.commit('applyActiveNote', {});
-      });
+      this.$store.dispatch('notes/destroy', note);
     },
 
     blurSaveNote() {
-      this.blurSave = setTimeout(() => this.saveNote(), 750);
+      this.blurSave = this.shouldUpdate ? setTimeout(() => this.saveNote(), 750) : {};
     },
 
     clearBlurSave() {
-      return clearTimeout(this.blurSave);
+      clearTimeout(this.blurSave);
     }
   },
 
@@ -101,14 +98,14 @@ export default {
 
         note.body = (note.body) ? note.body.concat('', edits) : edits;
 
-        this.$store.commit('applyUpdateNote', note);
-        this.$store.commit('applyActiveNote', note);
+        this.$store.commit('notes/editItem', note);
+        this.$store.commit('notes/activeItem', note);
       }
     });
 
     this.$eventHub.$on('note-deleted', (note) => {
       if (this.note.id === note.id) {
-        this.$store.commit('applyActiveNote', {});
+        this.$store.commit('notes/activeItem', {});
       }
     });
   }
