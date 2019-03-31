@@ -19,4 +19,9 @@ class Category extends Model
     {
         return $this->belongsToMany(Note::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
