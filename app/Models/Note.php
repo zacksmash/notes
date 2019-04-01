@@ -45,12 +45,12 @@ class Note extends Model
 
     public function getBodyAttribute($value)
     {
-        return ($value) ? htmlspecialchars_decode($value) : '';
+        return ($value) ? html_entity_decode($value) : '';
     }
 
     public function getBodyEscapedAttribute()
     {
-        return 'body escaped';
+        return $this->body ? strip_tags(html_entity_decode($this->body)) : null;
     }
 
     public function user()

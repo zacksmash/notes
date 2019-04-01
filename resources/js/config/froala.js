@@ -1,8 +1,7 @@
 export default {
-  key: process.env.FROALA_KEY,
   immediateVueModelUpdate: true,
   placeholderText: '',
-  // toolbarInline: true,
+  toolbarInline: true,
   imageUploadParam: 'image',
   imageUploadURL: '/api/editor',
   imageManagerLoadURL: '/api/editor',
@@ -14,15 +13,9 @@ export default {
     'italic',
     'underline',
     'strikeThrough',
-    'paragraphFormat',
+    '|',
     'insertLink',
-    'quote',
-    'formatOL',
-    'formatUL',
-    /*'insertImage',*/ '|',
-    'undo',
-    'redo',
-    'selectAll'
+    'insertImage',
   ],
   pluginsEnabled: [
     'lists',

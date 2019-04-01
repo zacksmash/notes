@@ -11,9 +11,10 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import VueRouter from 'vue-router';
 import VueAxios from 'vue-axios';
-require('froala-editor/js/froala_editor.pkgd.min.js')
-import VueFroala from 'vue-froala-wysiwyg'
+require('froala-editor/js/froala_editor.pkgd.min.js');
+import VueFroala from 'vue-froala-wysiwyg';
 import VueEcho from 'vue-echo';
+import VueDiff from './plugins/Diff';
 
 //-------------------------------------
 
@@ -42,7 +43,8 @@ window.axios.defaults.baseURL = `${baseURL}/api`;
 Vue.use(Vuex);
 Vue.use(VueRouter);
 Vue.use(VueAxios, axios);
-Vue.use(VueFroala)
+Vue.use(VueFroala);
+Vue.use(VueDiff);
 
 // Setup Laravel Echo
 Vue.use(VueEcho, {
@@ -75,6 +77,10 @@ Vue.use(require('@websanova/vue-auth'), {
 });
 
 Vue.prototype.$eventHub = new Vue(); // Global event bus
+
+Vue.filter('escapeHtml', function(value) {
+  return value.replace(/<(?:.|\n)*?>/gm, ' ');
+});
 
 /**
  * Register Global Components

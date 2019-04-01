@@ -7,4 +7,12 @@ aside.editor-menu {
   background: lightgray;
   z-index: 1;
   padding: 1rem;
+
+  ul {
+    li {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
 }

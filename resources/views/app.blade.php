@@ -28,5 +28,6 @@
     <script src="{{ mix('js/manifest.js') }}"></script>
     <script src="{{ mix('js/vendor.js') }}"></script>
   	<script src="{{ mix('js/app.js') }}"></script>
+    <script id="fr-fek">try{(function (k){localStorage.FEK=k;t=document.getElementById('fr-fek');t.parentNode.removeChild(t);})('{{ env('FROALA_KEY') }}')}catch(e){}</script>
   </body>
 </html>

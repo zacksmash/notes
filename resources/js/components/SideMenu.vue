@@ -9,8 +9,8 @@
       <li
       v-for="note in notes"
       :key="note.id"
-      v-text="note.body ? note.body : 'New Note'"
       @click="selectNote(note)">
+        {{ note.body ? note.body : 'New Note' | escapeHtml }}
       </li>
     </ul>
   </aside>

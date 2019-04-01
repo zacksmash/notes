@@ -6,7 +6,7 @@
           <button class="button" @click="showMenu = ! showMenu">Menu</button>
         </div>
         <div class="column shrink" v-if="note.id">
-          <button class="button warning" data-toggle="editor-menu">INSERT</button>
+          <button class="button warning" data-toggle="editor-menu">Insert</button>
           <zurb-dropdown id="editor-menu">
             <div class="button-group expanded overflow">
               <a class="button" @click="insertElement('H1')">Title</a>
@@ -14,12 +14,12 @@
               <a class="button" @click="insertElement('P')">Body</a>
               <a class="button" @click="insertElement('PRE')">Code</a>
             </div>
-            <div class="button-group expanded">
-              <a class="button" @click="applyStyle('strong')">B</a>
+            <!-- <div class="button-group expanded">
+              <a class="button" @click="applyStyle('bold')">B</a>
               <a class="button" @click="applyStyle('italic')">I</a>
               <a class="button" @click="applyStyle('underline')">U</a>
               <a class="button" @click="applyStyle('strikeThrough')">S</a>
-            </div>
+            </div> -->
             <div class="inline-button-group">
               <div class="button-group">
                 <a class="button" @click="insertList('UL')">UL</a>
@@ -50,7 +50,6 @@
         ref="editor"
         :tag="'textarea'"
         :config="config"
-        @blur="blurSaveNote"
         v-model="note.body"></froala>
       </form>
 
@@ -128,7 +127,6 @@ export default {
   },
 
   mounted() {
-
     this.$eventHub.$on('note-selected', () => {
       this.showMenu = false;
       this.currentBodyLength = this.note.body ? this.note.body.length : 0;
@@ -136,14 +134,25 @@ export default {
 
     this.$eventHub.$on('note-updated', (note) => {
       if (this.note.id === note.id) {
-        let edits = this.note.body ? this.note.body.substring(this.currentBodyLength) : '';
+        // let diff = Diff.diff(this.note.body, note.body);
 
-        this.currentBodyLength = note.body ? note.body.length : 0;
+        // let vm = this;
+        // Diff.observableDiff(vm.note, note, function (d) {
+        //   Diff.applyDiff(vm.note, note);
+        // });
 
-        note.body = (note.body) ? note.body.concat('', edits) : edits;
+        console.log(this.$diff.diffChars(note.body, this.note.body));
 
+        // let edits = this.note.body ? this.note.body.substring(this.currentBodyLength) : '';
+
+        // this.currentBodyLength = note.body ? note.body.length : 0;
+
+        // note.body = (note.body) ? note.body.concat('', edits) : edits;
+
+        // this.$store.commit('notes/editItem', note);
+        // this.$store.commit('notes/activeItem', note);
+      } else {
         this.$store.commit('notes/editItem', note);
-        this.$store.commit('notes/activeItem', note);
       }
     });
 
@@ -152,6 +161,11 @@ export default {
         this.$store.commit('notes/activeItem', {});
       }
     });
+
+    let vm = this;
+    $(this.$refs.editor.$el)
+    .on('froalaEditor.blur', (e) => vm.blurSaveNote())
   }
 }
 </script>
+
