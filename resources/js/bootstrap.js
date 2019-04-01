@@ -11,6 +11,8 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import VueRouter from 'vue-router';
 import VueAxios from 'vue-axios';
+require('froala-editor/js/froala_editor.pkgd.min.js')
+import VueFroala from 'vue-froala-wysiwyg'
 import VueEcho from 'vue-echo';
 
 //-------------------------------------
@@ -40,6 +42,7 @@ window.axios.defaults.baseURL = `${baseURL}/api`;
 Vue.use(Vuex);
 Vue.use(VueRouter);
 Vue.use(VueAxios, axios);
+Vue.use(VueFroala)
 
 // Setup Laravel Echo
 Vue.use(VueEcho, {
@@ -76,4 +79,4 @@ Vue.prototype.$eventHub = new Vue(); // Global event bus
 /**
  * Register Global Components
  */
-// Vue.component('example-component', require('./components/ExampleComponent'));
+Vue.component('zurb-dropdown', require('./components/foundation/Dropdown'));

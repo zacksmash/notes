@@ -26,10 +26,12 @@
     },
     "dependencies": {
         "@websanova/vue-auth": "^2.21.14-beta",
+        "babel-runtime": "^6.26.0",
         "laravel-echo": "^1.5.3",
         "pusher-js": "^4.4.0",
         "vue-axios": "^2.1.4",
         "vue-echo": "^1.0.2",
+        "vue-froala-wysiwyg": "^2.9.3",
         "vue-router": "^3.0.2",
         "vuex": "^3.1.0"
     }

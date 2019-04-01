@@ -10,6 +10,15 @@ use App\Events\NoteDeleted;
 class Note extends Model
 {
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = [
+        'body_escaped'
+    ];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
@@ -27,6 +36,21 @@ class Note extends Model
     public function setFavoritedAttribute($value)
     {
         $this->attributes['favorited'] = $value ? now() : null;
+    }
+
+    public function setBodyAttribute($value)
+    {
+        $this->attributes['body'] = e($value);
+    }
+
+    public function getBodyAttribute($value)
+    {
+        return ($value) ? htmlspecialchars_decode($value) : '';
+    }
+
+    public function getBodyEscapedAttribute()
+    {
+        return 'body escaped';
     }
 
     public function user()

@@ -2,7 +2,8 @@
 @import 'foundation';
 
 /** NPM dependencies */
-// @import 'node_modules/path/to/plugin.scss';
+@import 'node_modules/froala-editor/css/froala_editor.pkgd';
+@import 'node_modules/froala-editor/css/froala_style';
 
 /** App variables/mixins */
 @import 'variables';

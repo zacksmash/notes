@@ -11,6 +11,7 @@
   	<meta name="csrf-token" content="{{ csrf_token() }}">
   	<!-- Styles -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" />
   </head>
 
   <body>

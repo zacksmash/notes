@@ -6,6 +6,31 @@
           <button class="button" @click="showMenu = ! showMenu">Menu</button>
         </div>
         <div class="column shrink" v-if="note.id">
+          <button class="button warning" data-toggle="editor-menu">INSERT</button>
+          <zurb-dropdown id="editor-menu">
+            <div class="button-group expanded overflow">
+              <a class="button" @click="insertElement('H1')">Title</a>
+              <a class="button" @click="insertElement('H4')">Heading</a>
+              <a class="button" @click="insertElement('P')">Body</a>
+              <a class="button" @click="insertElement('PRE')">Code</a>
+            </div>
+            <div class="button-group expanded">
+              <a class="button" @click="applyStyle('strong')">B</a>
+              <a class="button" @click="applyStyle('italic')">I</a>
+              <a class="button" @click="applyStyle('underline')">U</a>
+              <a class="button" @click="applyStyle('strikeThrough')">S</a>
+            </div>
+            <div class="inline-button-group">
+              <div class="button-group">
+                <a class="button" @click="insertList('UL')">UL</a>
+                <a class="button" @click="insertList('OL')">OL</a>
+              </div>
+              <div class="button-group expanded">
+                <a class="button" @click="applyStyle('outdent')">&larr;</a>
+                <a class="button" @click="applyStyle('indent')">&rarr;</a>
+              </div>
+            </div>
+          </zurb-dropdown>
           <button class="button" type="submit" @click="saveNote">Save</button>
           <button class="button secondary" @click="favoriteNote">
             <span v-if="note.favorited">
@@ -21,11 +46,12 @@
       <form
       @submit.prevent="saveNote"
       v-show="note.id">
-        <textarea
-        ref="noteField"
-        v-model="note.body"
+        <froala
+        ref="editor"
+        :tag="'textarea'"
+        :config="config"
         @blur="blurSaveNote"
-        rows="10"></textarea>
+        v-model="note.body"></froala>
       </form>
 
       <div
@@ -38,10 +64,12 @@
 
 <script>
 import { mapState } from 'vuex';
+import froalaConfig from '../config/froala';
 
 export default {
   data() {
     return {
+      config: froalaConfig,
       blurSave: {},
       showMenu: false,
       currentBodyLength: 0,
@@ -80,14 +108,30 @@ export default {
 
     clearBlurSave() {
       clearTimeout(this.blurSave);
+    },
+
+    insertElement(type) {
+      $(this.$refs.editor.$el).froalaEditor('paragraphFormat.apply', type);
+    },
+
+    insertList(type) {
+      $(this.$refs.editor.$el).froalaEditor('lists.format', type);
+    },
+
+    applyStyle(type) {
+      $(this.$refs.editor.$el).froalaEditor(`commands.${type}`);
     }
   },
 
+  created() {
+
+  },
+
   mounted() {
+
     this.$eventHub.$on('note-selected', () => {
       this.showMenu = false;
       this.currentBodyLength = this.note.body ? this.note.body.length : 0;
-      this.$nextTick(() => this.$refs.noteField.focus());
     });
 
     this.$eventHub.$on('note-updated', (note) => {
