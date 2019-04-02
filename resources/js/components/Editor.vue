@@ -141,7 +141,14 @@ export default {
         //   Diff.applyDiff(vm.note, note);
         // });
 
-        console.log(this.$diff.diffChars(note.body, this.note.body));
+        let newNote = '';
+        let diff = this.$diff.diffChars(this.note.body, note.body);
+
+        diff.forEach(function(part){
+          newNote += part.value;
+        });
+
+        console.log(newNote);
 
         // let edits = this.note.body ? this.note.body.substring(this.currentBodyLength) : '';
 
